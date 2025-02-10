@@ -1,0 +1,98 @@
+/* NFTGallery.css */
+
+.nft-gallery {
+  border-radius: 15px;
+  width: 700px;
+  padding: 2rem;
+  background-color: #1e1e2f;
+  color: #fff;
+}
+
+.nft-gallery h3 {
+  margin-top: -15px;
+  padding-bottom: -15px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #ffcc00;
+}
+
+.nft-slider {
+  max-width: 600px;
+  height: 250px;
+  margin: 0 auto;
+}
+
+.collection-card {
+  /* margin-top: -5px; */
+  background-color: #292940;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.collection-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.collection-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.collection-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.collection-card .verified {
+  color: #4caf50;
+  font-size: 1rem;
+  margin-left: 5px;
+}
+
+.collection-card .details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.collection-card .details div {
+  text-align: left;
+}
+
+.collection-card .details p:first-child {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.collection-card .details p:last-child {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Slider Customization */
+.slick-dots li button:before {
+  color: #fff;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: #ffcc00;
+}
+
+.slick-slide {
+  padding: 0 10px;
+}
+
+.slick-list {
+  margin: 0 -10px;
+}
