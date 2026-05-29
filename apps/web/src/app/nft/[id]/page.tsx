@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Copy,
   Check,
+  X,
 } from "lucide-react";
 import styles from "./page.module.css";
 
@@ -52,10 +53,28 @@ const NFT_DATA = {
   ],
 };
 
+import { useFavorites } from "@/contexts/FavoritesContext";
+
 export default function NFTDetailPage() {
-  const [isLiked, setIsLiked] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isLiked = isFavorite(NFT_DATA.tokenId); // We will use tokenId or a mock ID as ID
+  
   const [activeTab, setActiveTab] = useState<"properties" | "activity" | "details">("properties");
   const [copied, setCopied] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
+
+  const handleLike = () => {
+    toggleFavorite({
+      id: NFT_DATA.tokenId,
+      title: NFT_DATA.title,
+      collection: NFT_DATA.collection,
+      creator: NFT_DATA.creator.name,
+      price: NFT_DATA.price,
+      likes: NFT_DATA.favorites,
+      image: NFT_DATA.image
+    });
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText("0x1234567890abcdef");
@@ -73,7 +92,7 @@ export default function NFTDetailPage() {
               <Image src={NFT_DATA.image} alt={NFT_DATA.title} fill className={styles.nftImage} priority sizes="(max-width: 768px) 100vw, 600px" />
             </div>
             <div className={styles.imageActions}>
-              <button className={`${styles.actionBtn} ${isLiked ? styles.liked : ""}`} onClick={() => setIsLiked(!isLiked)}>
+              <button className={`${styles.actionBtn} ${isLiked ? styles.liked : ""}`} onClick={handleLike}>
                 <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
                 <span>{NFT_DATA.favorites + (isLiked ? 1 : 0)}</span>
               </button>
@@ -116,10 +135,10 @@ export default function NFTDetailPage() {
               <span className={styles.usdValue}>(${NFT_DATA.usdPrice})</span>
             </div>
             <div className={styles.priceActions}>
-              <button className={styles.buyBtn} id="nft-buy-btn">
+              <button className={styles.buyBtn} id="nft-buy-btn" onClick={() => setShowCheckoutModal(true)}>
                 <ShoppingCart size={18} /> Buy Now
               </button>
-              <button className={styles.offerBtn} id="nft-offer-btn">
+              <button className={styles.offerBtn} id="nft-offer-btn" onClick={() => setShowOfferModal(true)}>
                 <Tag size={18} /> Make Offer
               </button>
             </div>
@@ -179,6 +198,101 @@ export default function NFTDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      {showCheckoutModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowCheckoutModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <button className={styles.closeModalBtn} onClick={() => setShowCheckoutModal(false)}>
+              <X size={20} />
+            </button>
+            <h2 className={styles.modalTitle}>Complete Purchase</h2>
+            
+            <div className={styles.modalItemPreview}>
+              <div className={styles.modalThumb}>
+                <Image src={NFT_DATA.image} alt={NFT_DATA.title} fill className={styles.modalImage} />
+              </div>
+              <div className={styles.modalItemInfo}>
+                <div className={styles.modalItemCollection}>{NFT_DATA.collection}</div>
+                <div className={styles.modalItemName}>{NFT_DATA.title}</div>
+              </div>
+            </div>
+
+            <div className={styles.modalBreakdown}>
+              <div className={styles.modalRow}>
+                <span>Item Price</span>
+                <span>{NFT_DATA.price} ETH</span>
+              </div>
+              <div className={styles.modalRow}>
+                <span>Creator Royalty (10%)</span>
+                <span>0.245 ETH</span>
+              </div>
+              <div className={styles.modalRow}>
+                <span>Network Fee</span>
+                <span>0.005 ETH</span>
+              </div>
+              <hr className={styles.modalDivider} />
+              <div className={styles.modalTotal}>
+                <span>Total</span>
+                <div className={styles.modalTotalAmount}>
+                  <span>2.70 ETH</span>
+                  <span className={styles.modalUsdAmount}>($5,389.20)</span>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              className={styles.modalConfirmBtn}
+              onClick={() => {
+                alert("Transaction sent to wallet!");
+                setShowCheckoutModal(false);
+              }}
+            >
+              Confirm Checkout
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Offer Modal */}
+      {showOfferModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowOfferModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <button className={styles.closeModalBtn} onClick={() => setShowOfferModal(false)}>
+              <X size={20} />
+            </button>
+            <h2 className={styles.modalTitle}>Make an Offer</h2>
+            <p className={styles.modalSubtitle}>You are about to make an offer on <strong>{NFT_DATA.title}</strong>.</p>
+            
+            <div className={styles.offerInputWrapper}>
+              <span className={styles.ethPrefix}>ETH</span>
+              <input type="number" placeholder="Amount (e.g. 2.0)" className={styles.offerInput} />
+            </div>
+
+            <div className={styles.modalBreakdown}>
+              <div className={styles.modalRow}>
+                <span>Wallet Balance</span>
+                <span>4.50 WETH</span>
+              </div>
+              <div className={styles.modalRow}>
+                <span>Expiration Date</span>
+                <span>3 Days</span>
+              </div>
+            </div>
+
+            <button 
+              className={styles.modalConfirmBtn}
+              onClick={() => {
+                alert("Offer successfully placed!");
+                setShowOfferModal(false);
+              }}
+            >
+              Submit Offer
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

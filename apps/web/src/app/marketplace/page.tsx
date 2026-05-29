@@ -10,6 +10,7 @@ import {
   X,
   Sparkles,
 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { NFTCard } from "@/components/nft/NFTCard";
 import styles from "./page.module.css";
 
@@ -27,19 +28,26 @@ const SORT_OPTIONS = [
 
 // ============ Mock NFTs ============
 const MOCK_NFTS = [
-  { id: "m1", image: "/images/RareNFT.jpg", title: "Genesis Oracle #001", collection: "Genesis Collection", isVerified: true, price: "2.45", usdPrice: "4,890", creatorAvatar: "/images/Hackatao.jpg", creatorName: "Hackatao", likes: 234 },
-  { id: "m2", image: "/images/LiveAuction.jpg", title: "Cosmic Dreams #147", collection: "Cosmic Series", isVerified: true, price: "1.8", usdPrice: "3,600", creatorAvatar: "/images/Mike.jpg", creatorName: "Mike Parisella", likes: 186 },
-  { id: "m3", image: "/images/Savana.jpg", title: "Savanna Spirits", collection: "Nature Art", isVerified: false, price: "0.95", usdPrice: "1,900", creatorAvatar: "/images/Reeza.jpg", creatorName: "Reza Afshar", likes: 142 },
-  { id: "m4", image: "/images/Skyborne.png", title: "Skyborne Immortal #42", collection: "Skyborne Genesis", isVerified: true, price: "3.2", usdPrice: "6,400", creatorAvatar: "/images/Tobi.jpg", creatorName: "Tobi Schnorpfeil", likes: 312, isAuction: true, endTime: "2h 15m" },
-  { id: "m5", image: "/images/RareNFT.jpg", title: "Neon Samurai #033", collection: "Neon Collection", isVerified: true, price: "1.15", usdPrice: "2,300", creatorAvatar: "/images/Hackatao.jpg", creatorName: "Hackatao", likes: 98 },
-  { id: "m6", image: "/images/LiveAuction.jpg", title: "Abstract Realm #99", collection: "Abstract Art", isVerified: false, price: "0.65", usdPrice: "1,300", creatorAvatar: "/images/Mike.jpg", creatorName: "Mike Parisella", likes: 77 },
-  { id: "m7", image: "/images/Savana.jpg", title: "Wild Plains #12", collection: "Nature Art", isVerified: false, price: "0.42", usdPrice: "840", creatorAvatar: "/images/Reeza.jpg", creatorName: "Reza Afshar", likes: 56 },
-  { id: "m8", image: "/images/Skyborne.png", title: "Sky Guardian #71", collection: "Skyborne Genesis", isVerified: true, price: "2.8", usdPrice: "5,600", creatorAvatar: "/images/Tobi.jpg", creatorName: "Tobi Schnorpfeil", likes: 201, isAuction: true, endTime: "6h 30m" },
+  { id: "m1", category: "Art", image: "/images/RareNFT.jpg", title: "Genesis Oracle #001", collection: "Genesis Collection", isVerified: true, price: "2.45", usdPrice: "4,890", creatorAvatar: "/images/Hackatao.jpg", creatorName: "Hackatao", likes: 234 },
+  { id: "m2", category: "Art", image: "/images/LiveAuction.jpg", title: "Cosmic Dreams #147", collection: "Cosmic Series", isVerified: true, price: "1.8", usdPrice: "3,600", creatorAvatar: "/images/Mike.jpg", creatorName: "Mike Parisella", likes: 186 },
+  { id: "m3", category: "Photography", image: "/images/Savana.jpg", title: "Savanna Spirits", collection: "Nature Art", isVerified: false, price: "0.95", usdPrice: "1,900", creatorAvatar: "/images/Reeza.jpg", creatorName: "Reza Afshar", likes: 142 },
+  { id: "m4", category: "Gaming", image: "/images/Skyborne.png", title: "Skyborne Immortal #42", collection: "Skyborne Genesis", isVerified: true, price: "3.2", usdPrice: "6,400", creatorAvatar: "/images/Tobi.jpg", creatorName: "Tobi Schnorpfeil", likes: 312, isAuction: true, endTime: "2h 15m" },
+  { id: "m5", category: "PFPs", image: "/images/RareNFT.jpg", title: "Neon Samurai #033", collection: "Neon Collection", isVerified: true, price: "1.15", usdPrice: "2,300", creatorAvatar: "/images/Hackatao.jpg", creatorName: "Hackatao", likes: 98 },
+  { id: "m6", category: "Art", image: "/images/LiveAuction.jpg", title: "Abstract Realm #99", collection: "Abstract Art", isVerified: false, price: "0.65", usdPrice: "1,300", creatorAvatar: "/images/Mike.jpg", creatorName: "Mike Parisella", likes: 77 },
+  { id: "m7", category: "Photography", image: "/images/Savana.jpg", title: "Wild Plains #12", collection: "Nature Art", isVerified: false, price: "0.42", usdPrice: "840", creatorAvatar: "/images/Reeza.jpg", creatorName: "Reza Afshar", likes: 56 },
+  { id: "m8", category: "Gaming", image: "/images/Skyborne.png", title: "Sky Guardian #71", collection: "Skyborne Genesis", isVerified: true, price: "2.8", usdPrice: "5,600", creatorAvatar: "/images/Tobi.jpg", creatorName: "Tobi Schnorpfeil", likes: 201, isAuction: true, endTime: "6h 30m" },
+  { id: "m9", category: "Music", image: "/nfts/music1.png", title: "Synthwave Nights EP", collection: "Audio Genesis", isVerified: true, price: "0.5", usdPrice: "1,000", creatorAvatar: "/images/Hackatao.jpg", creatorName: "DJ Cyber", likes: 450 },
+  { id: "m10", category: "Music", image: "/nfts/music2.png", title: "Golden Frequency #1", collection: "Frequency Arts", isVerified: true, price: "0.8", usdPrice: "1,600", creatorAvatar: "/images/Mike.jpg", creatorName: "Audio Alchemist", likes: 320, isAuction: true, endTime: "12h 00m" },
+  { id: "m11", category: "Photography", image: "/nfts/photo1.png", title: "Neon Nights in Neo-Tokyo", collection: "Urban Exploration", isVerified: true, price: "1.2", usdPrice: "2,400", creatorAvatar: "/images/Reeza.jpg", creatorName: "Street Walker", likes: 890 },
 ];
 
 export default function MarketplacePage() {
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get("category") || "All";
+  const normalizedCategory = CATEGORIES.find(c => c.toLowerCase() === initialCategory.toLowerCase()) || "All";
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState(normalizedCategory);
   const [selectedChain, setSelectedChain] = useState("All Chains");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [sortBy, setSortBy] = useState("recently_listed");
@@ -237,9 +245,17 @@ export default function MarketplacePage() {
 
         {/* NFT Grid */}
         <div className={styles.resultsArea}>
-          <p className={styles.resultsCount}>{MOCK_NFTS.length} items</p>
+          <p className={styles.resultsCount}>{
+            MOCK_NFTS.filter(nft => 
+              (selectedCategory === "All" || nft.category === selectedCategory) &&
+              (searchQuery === "" || nft.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            ).length
+          } items</p>
           <div className={`${styles.nftGrid} ${!isFilterOpen ? styles.nftGridFull : ""}`}>
-            {MOCK_NFTS.map((nft) => (
+            {MOCK_NFTS.filter(nft => 
+              (selectedCategory === "All" || nft.category === selectedCategory) &&
+              (searchQuery === "" || nft.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            ).map((nft) => (
               <NFTCard key={nft.id} {...nft} />
             ))}
           </div>

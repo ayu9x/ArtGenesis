@@ -30,6 +30,9 @@ contract Marketplace is ERC721Holder, ReentrancyGuard, Ownable {
     }
 
     mapping(uint256 => Listing) public listings;
+    
+    // listingId => offerer address => offer amount
+    mapping(uint256 => mapping(address => uint256)) public offers;
 
     event ListingCreated(
         uint256 indexed listingId,
@@ -46,6 +49,11 @@ contract Marketplace is ERC721Holder, ReentrancyGuard, Ownable {
     );
     
     event ListingCancelled(uint256 indexed listingId);
+    
+    event OfferMade(uint256 indexed listingId, address indexed offerer, uint256 amount);
+    event OfferAccepted(uint256 indexed listingId, address indexed offerer, uint256 amount);
+    event OfferCancelled(uint256 indexed listingId, address indexed offerer);
+    
     event PlatformFeeUpdated(uint256 newFee);
     event TreasuryUpdated(address newTreasury);
 
@@ -141,6 +149,82 @@ contract Marketplace is ERC721Holder, ReentrancyGuard, Ownable {
         IERC721(listing.nftContract).safeTransferFrom(address(this), msg.sender, listing.tokenId);
 
         emit ListingCancelled(listingId);
+    }
+
+    // --- Offer functionality ---
+
+    function makeOffer(uint256 listingId) external payable nonReentrant {
+        Listing storage listing = listings[listingId];
+        require(listing.status == ListingStatus.Active, "Listing is not active");
+        require(msg.value > 0, "Offer amount must be greater than zero");
+
+        // If the user already has an offer, add to it
+        offers[listingId][msg.sender] += msg.value;
+
+        emit OfferMade(listingId, msg.sender, offers[listingId][msg.sender]);
+    }
+
+    function acceptOffer(uint256 listingId, address offerer) external nonReentrant {
+        Listing storage listing = listings[listingId];
+        require(listing.status == ListingStatus.Active, "Listing is not active");
+        require(listing.seller == msg.sender, "Not the seller");
+        
+        uint256 offerAmount = offers[listingId][offerer];
+        require(offerAmount > 0, "No active offer from this address");
+
+        // Clear the offer
+        offers[listingId][offerer] = 0;
+        
+        listing.status = ListingStatus.Sold;
+
+        // Calculate royalties if applicable
+        uint256 royaltyAmount = 0;
+        address royaltyReceiver = address(0);
+        
+        try IERC2981(listing.nftContract).royaltyInfo(listing.tokenId, offerAmount) returns (address receiver, uint256 amount) {
+            royaltyReceiver = receiver;
+            royaltyAmount = amount;
+        } catch {
+            // Contract doesn't support ERC2981
+        }
+
+        // Calculate platform fee
+        uint256 platformFee = (offerAmount * platformFeeBasisPoints) / 10000;
+        
+        // Calculate seller net amount
+        uint256 sellerAmount = offerAmount - platformFee - royaltyAmount;
+
+        // Transfer NFT to buyer (offerer)
+        IERC721(listing.nftContract).safeTransferFrom(address(this), offerer, listing.tokenId);
+
+        // Distribute funds
+        if (platformFee > 0) {
+            (bool success, ) = treasury.call{value: platformFee}("");
+            require(success, "Platform fee transfer failed");
+        }
+        
+        if (royaltyAmount > 0 && royaltyReceiver != address(0)) {
+            (bool success, ) = payable(royaltyReceiver).call{value: royaltyAmount}("");
+            require(success, "Royalty transfer failed");
+        }
+
+        (bool sellerSuccess, ) = listing.seller.call{value: sellerAmount}("");
+        require(sellerSuccess, "Seller transfer failed");
+
+        emit OfferAccepted(listingId, offerer, offerAmount);
+        emit ListingSold(listingId, offerer, offerAmount);
+    }
+
+    function cancelOffer(uint256 listingId) external nonReentrant {
+        uint256 offerAmount = offers[listingId][msg.sender];
+        require(offerAmount > 0, "No active offer");
+
+        offers[listingId][msg.sender] = 0;
+
+        (bool success, ) = msg.sender.call{value: offerAmount}("");
+        require(success, "Refund failed");
+
+        emit OfferCancelled(listingId, msg.sender);
     }
 
     // Admin functions

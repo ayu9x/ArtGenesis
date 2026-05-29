@@ -34,13 +34,24 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // Simulated wallet state (will be replaced with Wagmi)
+  // Auth state (replaces simulated wallet state for Web2)
   const [isConnected, setIsConnected] = useState(false);
-  const walletAddress = "0x1234...5678";
+  const [walletAddress, setWalletAddress] = useState("0x1234...5678");
+
+  useEffect(() => {
+    // Check if logged in
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      setIsConnected(true);
+      // Optional: decode token to get email, but for now we just show a generic address/username
+      setWalletAddress("Logged In");
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,10 +68,36 @@ export function Navbar() {
       if (!target.closest(`.${styles.profileDropdown}`) && !target.closest(`.${styles.profileButton}`)) {
         setIsProfileOpen(false);
       }
+      if (!target.closest(`.${styles.notificationDropdown}`) && !target.closest(`#nav-notifications`)) {
+        setIsNotificationsOpen(false);
+      }
     };
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, []);
+
+  // Initialize theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const initialDarkMode = savedTheme === "dark" || (!savedTheme && prefersDark);
+    
+    setIsDarkMode(initialDarkMode);
+    if (!initialDarkMode) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  }, []);
+
+  // Update theme when toggled
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.removeAttribute("data-theme");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -141,14 +178,56 @@ export function Navbar() {
           </button>
 
           {/* Notifications */}
-          <button
-            className={styles.iconButton}
-            aria-label="Notifications"
-            id="nav-notifications"
-          >
-            <Bell size={18} />
-            <span className={styles.notificationBadge}>3</span>
-          </button>
+          <div className={styles.notificationWrapper}>
+            <button
+              className={styles.iconButton}
+              aria-label="Notifications"
+              id="nav-notifications"
+              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+            >
+              <Bell size={18} />
+              <span className={styles.notificationBadge}>3</span>
+            </button>
+
+            {isNotificationsOpen && (
+              <div className={styles.notificationDropdown}>
+                <div className={styles.dropdownHeader}>
+                  <p className={styles.dropdownName}>Notifications</p>
+                </div>
+                <div className={styles.dropdownDivider} />
+                <div className={styles.notificationItem}>
+                  <div className={styles.notificationDot} />
+                  <div>
+                    <p className={styles.notificationText}><strong>Genesis Block</strong> was sold for 2.5 ETH</p>
+                    <p className={styles.notificationTime}>2 hours ago</p>
+                  </div>
+                </div>
+                <div className={styles.notificationItem}>
+                  <div className={styles.notificationDot} />
+                  <div>
+                    <p className={styles.notificationText}>New bid of 1.2 ETH on <strong>Cyber Punk</strong></p>
+                    <p className={styles.notificationTime}>5 hours ago</p>
+                  </div>
+                </div>
+                <div className={styles.notificationItem}>
+                  <div className={styles.notificationDot} />
+                  <div>
+                    <p className={styles.notificationText}>You successfully minted <strong>Abstract Horizon</strong></p>
+                    <p className={styles.notificationTime}>1 day ago</p>
+                  </div>
+                </div>
+                <div className={styles.dropdownDivider} />
+                <Link 
+                  href="/notifications" 
+                  className={styles.dropdownItem} 
+                  style={{ justifyContent: "center" }}
+                  onClick={() => setIsNotificationsOpen(false)}
+                >
+                  View All
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* Wallet / Profile */}
           {isConnected ? (
@@ -201,7 +280,12 @@ export function Navbar() {
                   <div className={styles.dropdownDivider} />
                   <button
                     className={styles.dropdownItem}
-                    onClick={() => setIsConnected(false)}
+                    onClick={() => {
+                      localStorage.removeItem("auth_token");
+                      setIsConnected(false);
+                      setIsProfileOpen(false);
+                      window.location.href = "/";
+                    }}
                   >
                     <LogOut size={16} />
                     Disconnect
@@ -210,14 +294,14 @@ export function Navbar() {
               )}
             </div>
           ) : (
-            <button
+            <Link
+              href="/login"
               className={styles.connectButton}
-              onClick={() => setIsConnected(true)}
               id="nav-connect-wallet"
             >
-              <Wallet size={18} />
-              <span>Connect</span>
-            </button>
+              <User size={18} />
+              <span>Sign In</span>
+            </Link>
           )}
 
           {/* Mobile Menu Toggle */}
@@ -261,13 +345,14 @@ export function Navbar() {
             </Link>
           </div>
           {!isConnected && (
-            <button
+            <Link
+              href="/login"
               className={styles.mobileConnectButton}
-              onClick={() => setIsConnected(true)}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
-              <Wallet size={18} />
-              Connect Wallet
-            </button>
+              <User size={18} />
+              Sign In / Register
+            </Link>
           )}
         </div>
       )}

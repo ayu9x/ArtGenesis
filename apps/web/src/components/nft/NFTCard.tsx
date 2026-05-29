@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingCart, Clock, BadgeCheck } from "lucide-react";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import styles from "./NFTCard.module.css";
 
 interface NFTCardProps {
@@ -37,13 +38,24 @@ export function NFTCard({
   isAuction = false,
   endTime,
 }: NFTCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isLiked = isFavorite(id);
   const [likeCount, setLikeCount] = useState(likes);
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsLiked(!isLiked);
+    
+    toggleFavorite({
+      id,
+      title,
+      collection,
+      creator: creatorName,
+      price,
+      likes: likeCount,
+      image
+    });
+
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
   };
 

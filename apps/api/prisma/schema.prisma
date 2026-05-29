@@ -6,23 +6,28 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  address   String   @unique
-  nonce     String?  // For SIWE authentication
-  username  String?  @unique
-  bio       String?
-  avatarUrl String?
-  coverUrl  String?
-  twitter   String?
-  instagram String?
-  website   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String    @id @default(uuid())
+  address          String?   @unique
+  nonce            String?   // For SIWE authentication
+  email            String?   @unique
+  passwordHash     String?
+  googleId         String?   @unique
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  username         String?   @unique
+  bio              String?
+  avatarUrl        String?
+  coverUrl         String?
+  twitter          String?
+  instagram        String?
+  website          String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   nfts      NFT[]
   collections Collection[]
@@ -59,7 +64,7 @@ model NFT {
   description     String?
   imageUrl        String
   metadataUrl     String
-  attributes      Json?    // Stored as JSON array
+  attributes      String?    // Stored as JSON string (SQLite doesn't support Json type)
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -70,23 +75,15 @@ model NFT {
   @@unique([contractAddress, tokenId])
 }
 
-enum ListingType {
-  FIXED_PRICE
-  AUCTION
-}
-
-enum ListingStatus {
-  ACTIVE
-  SOLD
-  CANCELLED
-  EXPIRED
-}
+// SQLite does not support enums, using strings instead
+// ListingType: "FIXED_PRICE" | "AUCTION"
+// ListingStatus: "ACTIVE" | "SOLD" | "CANCELLED" | "EXPIRED"
 
 model Listing {
   id              String        @id @default(uuid())
   listingId       String        // ID from smart contract
-  type            ListingType
-  status          ListingStatus @default(ACTIVE)
+  type            String
+  status          String        @default("ACTIVE")
   price           String        // Stored as string to handle uint256
   startTime       DateTime?
   endTime         DateTime?
@@ -98,18 +95,11 @@ model Listing {
   updatedAt       DateTime      @updatedAt
 }
 
-enum ActivityType {
-  MINT
-  LIST
-  SALE
-  TRANSFER
-  BID
-  CANCEL
-}
+// ActivityType: "MINT" | "LIST" | "SALE" | "TRANSFER" | "BID" | "CANCEL"
 
 model Activity {
   id              String       @id @default(uuid())
-  type            ActivityType
+  type            String
   txHash          String?
   price           String?      // If applicable (sale, list, bid)
   

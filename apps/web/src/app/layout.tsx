@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { Inter, Outfit, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
 export const metadata: Metadata = {
   title: "ArtGenesis — Discover, Collect & Sell Extraordinary NFTs",
@@ -39,10 +45,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="noise-overlay">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+      <body className={`${inter.variable} ${outfit.variable} ${spaceGrotesk.variable} noise-overlay`}>
+        <FavoritesProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </FavoritesProvider>
       </body>
     </html>
   );
