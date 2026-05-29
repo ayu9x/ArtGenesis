@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  address   String   @unique
+  nonce     String?  // For SIWE authentication
+  username  String?  @unique
+  bio       String?
+  avatarUrl String?
+  coverUrl  String?
+  twitter   String?
+  instagram String?
+  website   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  nfts      NFT[]
+  collections Collection[]
+  activities Activity[]
+}
+
+model Collection {
+  id              String   @id @default(uuid())
+  contractAddress String   @unique
+  chainId         Int
+  name            String
+  symbol          String
+  description     String?
+  imageUrl        String?
+  coverUrl        String?
+  creatorAddress  String
+  creator         User     @relation(fields: [creatorAddress], references: [address])
+  isVerified      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  nfts            NFT[]
+}
+
+model NFT {
+  id              String   @id @default(uuid())
+  tokenId         String
+  contractAddress String
+  ownerAddress    String
+  owner           User     @relation(fields: [ownerAddress], references: [address])
+  collection      Collection @relation(fields: [contractAddress], references: [contractAddress])
+  
+  name            String
+  description     String?
+  imageUrl        String
+  metadataUrl     String
+  attributes      Json?    // Stored as JSON array
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  listings        Listing[]
+  activities      Activity[]
+
+  @@unique([contractAddress, tokenId])
+}
+
+enum ListingType {
+  FIXED_PRICE
+  AUCTION
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+model Listing {
+  id              String        @id @default(uuid())
+  listingId       String        // ID from smart contract
+  type            ListingType
+  status          ListingStatus @default(ACTIVE)
+  price           String        // Stored as string to handle uint256
+  startTime       DateTime?
+  endTime         DateTime?
+  
+  nftId           String
+  nft             NFT           @relation(fields: [nftId], references: [id])
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+enum ActivityType {
+  MINT
+  LIST
+  SALE
+  TRANSFER
+  BID
+  CANCEL
+}
+
+model Activity {
+  id              String       @id @default(uuid())
+  type            ActivityType
+  txHash          String?
+  price           String?      // If applicable (sale, list, bid)
+  
+  fromAddress     String?
+  toAddress       String?
+  
+  nftId           String
+  nft             NFT          @relation(fields: [nftId], references: [id])
+  
+  userId          String?      // User who initiated or is associated
+  user            User?        @relation(fields: [userId], references: [id])
+
+  createdAt       DateTime     @default(now())
+}

@@ -1,0 +1,133 @@
+.page { padding-top: 72px; }
+
+/* Hero */
+.hero {
+  position: relative; min-height: 60vh; display: flex; align-items: center;
+  justify-content: center; text-align: center; overflow: hidden;
+  padding: 4rem var(--container-padding);
+}
+.heroOrb {
+  position: absolute; width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12), transparent 70%);
+  filter: blur(80px); top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.heroContent { position: relative; z-index: 1; max-width: 700px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 600;
+  color: var(--accent-primary); background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 100px; margin-bottom: 1.5rem;
+}
+.heroTitle {
+  font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800; line-height: 1.1; color: var(--text-primary); margin-bottom: 1.25rem;
+}
+.accent {
+  background: var(--gradient-accent); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text;
+}
+.heroDesc { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; }
+
+/* Stats */
+.statsSection { padding: 0 var(--container-padding); margin-top: -2rem; }
+.statsGrid {
+  max-width: var(--container-max); margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+}
+.statCard {
+  text-align: center; padding: 2rem; background: var(--bg-card);
+  border: 1px solid var(--border-primary); border-radius: var(--card-radius);
+  transition: all var(--transition-base);
+}
+.statCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); border-color: var(--border-accent); }
+.statCard h3 {
+  font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+  background: var(--gradient-accent); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.25rem;
+}
+.statCard p { font-size: 0.85rem; color: var(--text-tertiary); }
+
+/* Sections */
+.section {
+  max-width: var(--container-max); margin: 0 auto;
+  padding: var(--section-gap) var(--container-padding);
+}
+.sectionTitle {
+  font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+  color: var(--text-primary); text-align: center; margin-bottom: 3rem;
+}
+
+/* Features */
+.featuresGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.featureCard {
+  padding: 2rem; background: var(--bg-card); border: 1px solid var(--border-primary);
+  border-radius: var(--card-radius); transition: all var(--transition-base);
+}
+.featureCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); border-color: var(--border-accent); }
+.featureIcon {
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  background: rgba(139, 92, 246, 0.1); color: var(--accent-primary); border-radius: 12px; margin-bottom: 1rem;
+}
+.featureCard h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+.featureCard p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* Roadmap */
+.roadmapGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.roadmapCard {
+  padding: 2rem; background: var(--bg-card); border: 1px solid var(--border-primary);
+  border-radius: var(--card-radius); transition: all var(--transition-base);
+}
+.roadmapCard:hover { transform: translateY(-4px); }
+.phaseLabel {
+  font-size: 0.75rem; font-weight: 700; color: var(--accent-primary);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.roadmapCard h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin: 0.5rem 0 1rem; }
+.roadmapCard ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.roadmapCard li {
+  font-size: 0.85rem; color: var(--text-secondary); padding-left: 1.25rem; position: relative;
+}
+.roadmapCard li::before {
+  content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px;
+  background: var(--border-primary); border-radius: 50%;
+}
+.current { border-color: var(--accent-primary); }
+.current li::before { background: var(--accent-primary); }
+.currentBadge {
+  display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 1rem;
+  padding: 0.3rem 0.7rem; font-size: 0.72rem; font-weight: 600;
+  color: var(--accent-primary); background: rgba(139, 92, 246, 0.1);
+  border-radius: 100px;
+}
+
+/* CTA */
+.cta {
+  text-align: center; padding: 5rem var(--container-padding); margin: var(--section-gap) 0;
+}
+.cta h2 { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; }
+.cta p { font-size: 1rem; color: var(--text-secondary); margin-bottom: 2rem; }
+.ctaButtons { display: flex; justify-content: center; gap: 1rem; }
+
+.primaryBtn {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem;
+  font-family: var(--font-primary); font-size: 0.95rem; font-weight: 600;
+  color: white; background: var(--gradient-accent); border-radius: var(--button-radius);
+  text-decoration: none; transition: all var(--transition-base);
+}
+.primaryBtn:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+
+.secondaryBtn {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem;
+  font-family: var(--font-primary); font-size: 0.95rem; font-weight: 600;
+  color: var(--text-primary); background: transparent; border: 1px solid var(--border-primary);
+  border-radius: var(--button-radius); text-decoration: none; transition: all var(--transition-base);
+}
+.secondaryBtn:hover { border-color: var(--accent-primary); transform: translateY(-2px); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .featuresGrid { grid-template-columns: 1fr; }
+  .roadmapGrid { grid-template-columns: 1fr; }
+  .ctaButtons { flex-direction: column; align-items: center; }
+}
