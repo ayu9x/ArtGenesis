@@ -1,0 +1,42 @@
+.page { padding-top: 72px; min-height: 100vh; }
+.meshBg { position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139,92,246,0.12), transparent); pointer-events: none; z-index: 0; }
+.main { position: relative; z-index: 1; max-width: var(--container-max); margin: 0 auto; padding: 3rem var(--container-padding) 6rem; }
+.header { text-align: center; margin-bottom: 3rem; }
+.badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.25rem; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: 100px; color: var(--accent-primary); font-size: 0.85rem; font-weight: 600; margin-bottom: 1.25rem; }
+.title { font-family: var(--font-display); font-size: clamp(2rem,4vw,3rem); font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem; }
+.titleAccent { background: var(--gradient-accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.subtitle { max-width: 560px; margin: 0 auto; font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border-primary); margin-bottom: 2rem; }
+.tab { padding: 0.85rem 1.5rem; font-size: 0.95rem; font-weight: 500; color: var(--text-tertiary); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: all var(--transition-fast); }
+.tab:hover { color: var(--text-primary); }
+.tabActive { color: var(--accent-primary); border-bottom-color: var(--accent-primary); }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.card { background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: var(--card-radius-lg); overflow: hidden; transition: all var(--transition-base); }
+.card:hover { transform: translateY(-5px); border-color: rgba(139,92,246,0.3); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4); }
+.cardImage { position: relative; width: 100%; padding-top: 60%; overflow: hidden; }
+.cardImg { object-fit: cover; transition: transform 0.5s ease; }
+.card:hover .cardImg { transform: scale(1.05); }
+.liveBadge { position: absolute; top: 1rem; left: 1rem; display: flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.75rem; background: rgba(239,68,68,0.9); backdrop-filter: blur(4px); color: white; font-size: 0.72rem; font-weight: 700; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.04em; }
+.liveDot { width: 6px; height: 6px; border-radius: 50%; background: white; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.upcomingBadge { position: absolute; top: 1rem; left: 1rem; padding: 0.3rem 0.75rem; background: rgba(139,92,246,0.9); backdrop-filter: blur(4px); color: white; font-size: 0.72rem; font-weight: 700; border-radius: 100px; text-transform: uppercase; }
+.endedBadge { position: absolute; top: 1rem; left: 1rem; padding: 0.3rem 0.75rem; background: rgba(100,100,100,0.9); backdrop-filter: blur(4px); color: white; font-size: 0.72rem; font-weight: 700; border-radius: 100px; text-transform: uppercase; }
+.cardBody { padding: 1.5rem; }
+.cardCollection { font-size: 0.78rem; color: var(--accent-primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
+.cardName { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+.cardMeta { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+.metaItem { }
+.metaLabel { font-size: 0.72rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.2rem; }
+.metaValue { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+.countdown { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
+.countUnit { text-align: center; padding: 0.5rem 0.65rem; background: var(--bg-tertiary); border: 1px solid var(--border-secondary); border-radius: 8px; min-width: 48px; }
+.countValue { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+.countLabel { font-size: 0.6rem; color: var(--text-tertiary); text-transform: uppercase; }
+.mintBtn { width: 100%; padding: 0.75rem; font-weight: 600; font-size: 0.9rem; color: white; background: var(--gradient-accent); border: none; border-radius: 12px; cursor: pointer; transition: all var(--transition-base); }
+.mintBtn:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.mintBtnDisabled { background: var(--bg-tertiary); color: var(--text-tertiary); cursor: not-allowed; }
+.mintBtnDisabled:hover { transform: none; box-shadow: none; }
+.progressBar { height: 6px; background: var(--bg-tertiary); border-radius: 6px; margin-bottom: 0.5rem; overflow: hidden; }
+.progressFill { height: 100%; background: var(--gradient-accent); border-radius: 6px; transition: width 0.5s ease; }
+.progressText { font-size: 0.78rem; color: var(--text-tertiary); margin-bottom: 1rem; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; } }

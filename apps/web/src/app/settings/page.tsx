@@ -1,20 +1,127 @@
 "use client";
 
-import React, { useState } from "react";
-import { User, Bell, Shield, Wallet, Link as LinkIcon, Save, CreditCard } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { User, Bell, Shield, Wallet, Link as LinkIcon, Save, CreditCard, CheckCircle2, Loader2, XCircle, Copy, Check } from "lucide-react";
 import styles from "./page.module.css";
 
 const SETTINGS_TABS = [
   { id: "profile", label: "Profile", icon: <User size={18} /> },
+  { id: "wallets", label: "Linked Wallets", icon: <Wallet size={18} /> },
   { id: "notifications", label: "Notifications", icon: <Bell size={18} /> },
+  { id: "customize", label: "Customize", icon: <Settings size={18} /> },
   { id: "security", label: "Security", icon: <Shield size={18} /> },
-  { id: "wallets", label: "Wallets", icon: <Wallet size={18} /> },
   { id: "apps", label: "Connected Apps", icon: <LinkIcon size={18} /> },
+  { id: "developer", label: "Developer", icon: <LinkIcon size={18} /> },
+  { id: "verification", label: "Verification", icon: <CheckCircle2 size={18} /> },
+  { id: "shortcuts", label: "Shortcuts", icon: <Check size={18} /> },
 ];
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
 
+  // Real wallet state
+  const [connectedWallets, setConnectedWallets] = useState<{ name: string; address: string; isPrimary: boolean }[]>([]);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [walletError, setWalletError] = useState<string | null>(null);
+  const [copiedAddr, setCopiedAddr] = useState<string | null>(null);
+  const [hasMetaMask, setHasMetaMask] = useState(false);
+
+  useEffect(() => {
+    // Check if MetaMask is installed
+    if (typeof window !== "undefined" && (window as any).ethereum) {
+      setHasMetaMask(true);
+
+      // Check if already connected
+      (window as any).ethereum
+        .request({ method: "eth_accounts" })
+        .then((accounts: string[]) => {
+          if (accounts.length > 0) {
+            setConnectedWallets([
+              { name: "MetaMask", address: accounts[0], isPrimary: true },
+            ]);
+          }
+        })
+        .catch(() => {});
+
+      // Listen for account changes
+      (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
+        if (accounts.length === 0) {
+          setConnectedWallets([]);
+        } else {
+          setConnectedWallets([
+            { name: "MetaMask", address: accounts[0], isPrimary: true },
+          ]);
+        }
+      });
+    }
+  }, []);
+
+  const connectMetaMask = async () => {
+    if (!(window as any).ethereum) {
+      setWalletError("MetaMask is not installed. Please install MetaMask to continue.");
+      return;
+    }
+
+    setIsConnecting(true);
+    setWalletError(null);
+
+    try {
+      const accounts: string[] = await (window as any).ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      if (accounts.length > 0) {
+        // Check if already connected
+        const alreadyConnected = connectedWallets.some(
+          (w) => w.address.toLowerCase() === accounts[0].toLowerCase()
+        );
+        if (!alreadyConnected) {
+          setConnectedWallets((prev) => [
+            ...prev.map((w) => ({ ...w, isPrimary: prev.length === 0 ? true : w.isPrimary })),
+            {
+              name: "MetaMask",
+              address: accounts[0],
+              isPrimary: connectedWallets.length === 0,
+            },
+          ]);
+        }
+      }
+    } catch (err: any) {
+      if (err.code === 4001) {
+        setWalletError("Connection rejected. You declined the MetaMask request.");
+      } else {
+        setWalletError(err.message || "Failed to connect wallet.");
+      }
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnectWallet = (address: string) => {
+    setConnectedWallets((prev) => {
+      const updated = prev.filter((w) => w.address !== address);
+      // If we removed the primary, make the first remaining one primary
+      if (updated.length > 0 && !updated.some((w) => w.isPrimary)) {
+        updated[0].isPrimary = true;
+      }
+      return updated;
+    });
+  };
+
+  const setPrimaryWallet = (address: string) => {
+    setConnectedWallets((prev) =>
+      prev.map((w) => ({ ...w, isPrimary: w.address === address }))
+    );
+  };
+
+  const copyAddress = (address: string) => {
+    navigator.clipboard.writeText(address);
+    setCopiedAddr(address);
+    setTimeout(() => setCopiedAddr(null), 2000);
+  };
+
+  const shortenAddress = (addr: string) =>
+    `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   return (
     <div className={styles.page}>
       <div className={styles.sidebar}>
@@ -171,29 +278,88 @@ export default function SettingsPage() {
             <div className={styles.formSection}>
               <p className={styles.paragraph}>Manage your Web3 wallets connected to your ArtGenesis account.</p>
               
-              <div className={styles.walletCard}>
-                <div className={styles.walletInfo}>
-                  <div className={styles.walletIcon}><Wallet size={24} /></div>
-                  <div>
-                    <h4 className={styles.walletName}>MetaMask</h4>
-                    <p className={styles.walletAddress}>0x1234...5678</p>
-                  </div>
+              {/* Error message */}
+              {walletError && (
+                <div className={styles.errorBanner}>
+                  <XCircle size={18} />
+                  <span>{walletError}</span>
+                  <button onClick={() => setWalletError(null)} className={styles.errorClose}><XCircle size={14} /></button>
                 </div>
-                <span className={styles.badgePrimary}>Primary</span>
-              </div>
+              )}
 
-              <div className={styles.walletCard}>
-                <div className={styles.walletInfo}>
-                  <div className={styles.walletIcon}><Wallet size={24} /></div>
-                  <div>
-                    <h4 className={styles.walletName}>Coinbase Wallet</h4>
-                    <p className={styles.walletAddress}>0xabcd...efgh</p>
+              {/* Connected Wallets */}
+              {connectedWallets.length > 0 ? (
+                connectedWallets.map((wallet) => (
+                  <div key={wallet.address} className={styles.walletCard}>
+                    <div className={styles.walletInfo}>
+                      <div className={styles.walletIcon}>
+                        <Wallet size={24} />
+                        <span className={styles.walletConnectedDot} />
+                      </div>
+                      <div>
+                        <h4 className={styles.walletName}>{wallet.name}</h4>
+                        <div className={styles.walletAddressRow}>
+                          <p className={styles.walletAddress}>{shortenAddress(wallet.address)}</p>
+                          <button
+                            className={styles.copyAddrBtn}
+                            onClick={() => copyAddress(wallet.address)}
+                            title="Copy full address"
+                          >
+                            {copiedAddr === wallet.address ? <Check size={12} /> : <Copy size={12} />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.walletActions}>
+                      {wallet.isPrimary ? (
+                        <span className={styles.badgePrimary}>
+                          <CheckCircle2 size={12} /> Primary
+                        </span>
+                      ) : (
+                        <button className={styles.btnSecondary} onClick={() => setPrimaryWallet(wallet.address)}>
+                          Set Primary
+                        </button>
+                      )}
+                      <button className={styles.btnDanger} onClick={() => disconnectWallet(wallet.address)}>
+                        Disconnect
+                      </button>
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className={styles.emptyWallets}>
+                  <Wallet size={40} />
+                  <h4>No Wallets Connected</h4>
+                  <p>Connect your MetaMask wallet to start trading NFTs on ArtGenesis.</p>
                 </div>
-                <button className={styles.btnDanger}>Disconnect</button>
-              </div>
+              )}
 
-              <button className={styles.btnSecondary} style={{ marginTop: '1rem' }}>+ Connect New Wallet</button>
+              {/* Connect button */}
+              <button
+                className={styles.btnPrimary}
+                style={{ marginTop: '1.5rem' }}
+                onClick={connectMetaMask}
+                disabled={isConnecting}
+              >
+                {isConnecting ? (
+                  <>
+                    <Loader2 size={18} className={styles.spinner} /> Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Wallet size={18} /> {hasMetaMask ? "Connect MetaMask" : "Install MetaMask"}
+                  </>
+                )}
+              </button>
+
+              {!hasMetaMask && (
+                <p className={styles.hint} style={{ marginTop: '0.5rem' }}>
+                  MetaMask extension not detected.{' '}
+                  <a href="https://metamask.io/download/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>
+                    Download MetaMask →
+                  </a>
+                </p>
+              )}
 
               <hr className={styles.divider} />
 
@@ -249,6 +415,116 @@ export default function SettingsPage() {
           </>
         )}
 
+        {/* Customize Tab */}
+        {activeTab === "customize" && (
+          <>
+            <div className={styles.header}>
+              <h1>Customize</h1>
+            </div>
+            <div className={styles.formSection}>
+              <p className={styles.paragraph}>Manage your theme and display preferences.</p>
+
+              <div className={styles.toggleGroup}>
+                <div className={styles.toggleText}>
+                  <h4>Dark Mode</h4>
+                  <p>Use a dark theme for the interface.</p>
+                </div>
+                <label className={styles.switch}>
+                  <input type="checkbox" defaultChecked />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
+
+              <div className={styles.toggleGroup}>
+                <div className={styles.toggleText}>
+                  <h4>Reduce Animations</h4>
+                  <p>Minimize motion and animations throughout the site.</p>
+                </div>
+                <label className={styles.switch}>
+                  <input type="checkbox" />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Developer Tab */}
+        {activeTab === "developer" && (
+          <>
+            <div className={styles.header}>
+              <h1>Developer</h1>
+            </div>
+            <div className={styles.formSection}>
+              <p className={styles.paragraph}>Manage API keys and developer settings.</p>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>API Key</label>
+                <div className={styles.inputWithPrefix}>
+                  <input type="password" value="************************" readOnly className={styles.input} style={{ borderRadius: '8px' }} />
+                  <button className={styles.btnSecondary} style={{ marginLeft: '1rem' }}><Copy size={16} /></button>
+                </div>
+                <p className={styles.hint}>Never share your API key with anyone.</p>
+              </div>
+
+              <button className={styles.btnPrimary}>Generate New Key</button>
+            </div>
+          </>
+        )}
+
+        {/* Verification Tab */}
+        {activeTab === "verification" && (
+          <>
+            <div className={styles.header}>
+              <h1>Verification</h1>
+            </div>
+            <div className={styles.formSection}>
+              <p className={styles.paragraph}>Verify your identity to increase limits and get a verified badge.</p>
+
+              <div className={styles.walletCard}>
+                <div className={styles.walletInfo}>
+                  <div className={styles.walletIcon}><Shield size={24} /></div>
+                  <div>
+                    <h4 className={styles.walletName}>Identity Verification (KYC)</h4>
+                    <p className={styles.walletAddress}>Not Verified</p>
+                  </div>
+                </div>
+                <button className={styles.btnPrimary}>Start Verification</button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Shortcuts Tab */}
+        {activeTab === "shortcuts" && (
+          <>
+            <div className={styles.header}>
+              <h1>Shortcuts</h1>
+            </div>
+            <div className={styles.formSection}>
+              <p className={styles.paragraph}>Keyboard shortcuts to navigate faster.</p>
+
+              <div className={styles.toggleGroup}>
+                <div className={styles.toggleText}>
+                  <h4>Global Search</h4>
+                </div>
+                <div className={styles.badgePrimary} style={{ fontSize: '0.85rem' }}>Ctrl + K</div>
+              </div>
+              <div className={styles.toggleGroup}>
+                <div className={styles.toggleText}>
+                  <h4>Go to Profile</h4>
+                </div>
+                <div className={styles.badgePrimary} style={{ fontSize: '0.85rem' }}>G then P</div>
+              </div>
+              <div className={styles.toggleGroup}>
+                <div className={styles.toggleText}>
+                  <h4>Create Listing</h4>
+                </div>
+                <div className={styles.badgePrimary} style={{ fontSize: '0.85rem' }}>C</div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

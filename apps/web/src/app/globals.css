@@ -183,6 +183,29 @@ body {
   border: 1px solid var(--glass-border);
 }
 
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+}
+.main-content {
+  flex: 1;
+  margin-left: 0;
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
 /* ============ Gradient Text ============ */
 .gradient-text {
   background: var(--gradient-accent);

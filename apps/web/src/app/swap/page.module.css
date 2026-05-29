@@ -1,0 +1,25 @@
+.page { padding-top: 72px; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.meshBg { position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139,92,246,0.15), transparent), radial-gradient(ellipse 60% 40% at 20% 100%, rgba(59,130,246,0.1), transparent); pointer-events: none; z-index: 0; }
+.container { position: relative; z-index: 1; width: 100%; max-width: 480px; padding: 2rem var(--container-padding); }
+.card { background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: var(--card-radius-lg); padding: 2rem; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4); }
+.cardHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; }
+.cardTitle { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+.settingsBtn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 10px; color: var(--text-tertiary); cursor: pointer; transition: all var(--transition-fast); }
+.settingsBtn:hover { color: var(--text-primary); border-color: var(--border-accent); }
+.tokenField { background: var(--bg-tertiary); border: 1px solid var(--border-secondary); border-radius: 14px; padding: 1.25rem; margin-bottom: 0.5rem; }
+.fieldLabel { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-tertiary); margin-bottom: 0.75rem; }
+.fieldRow { display: flex; align-items: center; gap: 0.75rem; }
+.amountInput { flex: 1; background: none; border: none; color: var(--text-primary); font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; outline: none; }
+.amountInput::placeholder { color: var(--text-tertiary); }
+.tokenSelect { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.85rem; background: var(--bg-elevated); border: 1px solid var(--border-primary); border-radius: 100px; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; }
+.tokenSelect:hover { border-color: var(--accent-primary); }
+.tokenDot { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; }
+.tokenSelectName { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+.swapArrow { display: flex; justify-content: center; margin: -0.75rem 0; position: relative; z-index: 2; }
+.swapArrowBtn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); border: 2px solid var(--border-primary); border-radius: 12px; color: var(--accent-primary); cursor: pointer; transition: all var(--transition-base); }
+.swapArrowBtn:hover { transform: rotate(180deg); background: rgba(139,92,246,0.1); border-color: var(--accent-primary); }
+.rateRow { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 0; font-size: 0.85rem; color: var(--text-tertiary); border-top: 1px solid var(--border-secondary); margin-top: 1rem; }
+.rateRow span:last-child { color: var(--text-secondary); font-weight: 500; }
+.swapBtn { width: 100%; padding: 1rem; margin-top: 1.25rem; font-family: var(--font-primary); font-size: 1rem; font-weight: 600; color: white; background: var(--gradient-accent); border: none; border-radius: 14px; cursor: pointer; transition: all var(--transition-base); }
+.swapBtn:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.disclaimer { text-align: center; margin-top: 1rem; font-size: 0.78rem; color: var(--text-tertiary); }

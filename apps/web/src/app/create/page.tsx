@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Upload,
   ImagePlus,
@@ -15,6 +16,10 @@ import {
   Check,
   Sparkles,
   Eye,
+  Loader2,
+  CheckCircle2,
+  ExternalLink,
+  Copy,
 } from "lucide-react";
 import styles from "./page.module.css";
 
@@ -45,6 +50,13 @@ export default function CreatePage() {
   ]);
   const [listingType, setListingType] = useState<"fixed" | "auction" | "none">("fixed");
   const [price, setPrice] = useState("");
+
+  // Minting state
+  const [isMinting, setIsMinting] = useState(false);
+  const [mintStep, setMintStep] = useState(0);
+  const [mintSuccess, setMintSuccess] = useState(false);
+  const [mintedTokenId, setMintedTokenId] = useState("");
+  const [mintedTxHash, setMintedTxHash] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
@@ -94,6 +106,61 @@ export default function CreatePage() {
       default: return false;
     }
   };
+
+  const handleMint = async () => {
+    setIsMinting(true);
+
+    // Step 1: Uploading metadata to IPFS
+    setMintStep(1);
+    await new Promise((r) => setTimeout(r, 2000));
+
+    // Step 2: Minting NFT on-chain
+    setMintStep(2);
+    await new Promise((r) => setTimeout(r, 2500));
+
+    // Step 3: Creating listing (if applicable)
+    if (listingType !== "none") {
+      setMintStep(3);
+      await new Promise((r) => setTimeout(r, 1800));
+    }
+
+    // Done
+    const fakeTokenId = `#${Math.floor(Math.random() * 9000 + 1000)}`;
+    const fakeTxHash = `0x${Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}...`;
+    setMintedTokenId(fakeTokenId);
+    setMintedTxHash(fakeTxHash);
+    setMintStep(4);
+    setMintSuccess(true);
+    setIsMinting(false);
+  };
+
+  const handleCopyTx = () => {
+    navigator.clipboard.writeText(mintedTxHash);
+  };
+
+  const handleCreateAnother = () => {
+    setCurrentStep(0);
+    setFile(null);
+    setPreview(null);
+    setName("");
+    setDescription("");
+    setCollection("");
+    setProperties([{ trait_type: "", value: "" }]);
+    setListingType("fixed");
+    setPrice("");
+    setMintSuccess(false);
+    setMintStep(0);
+    setMintedTokenId("");
+    setMintedTxHash("");
+  };
+
+  const MINT_STEPS_LABELS = [
+    "",
+    "Uploading metadata to IPFS...",
+    "Minting NFT on-chain...",
+    "Creating marketplace listing...",
+    "Complete!",
+  ];
 
   return (
     <div className={styles.page}>
@@ -272,8 +339,21 @@ export default function CreatePage() {
                   Continue <ArrowRight size={16} />
                 </button>
               ) : (
-                <button className={styles.mintBtn} disabled={!canProceed()}>
-                  <Sparkles size={16} /> Mint NFT
+                <button
+                  className={styles.mintBtn}
+                  disabled={!canProceed() || isMinting}
+                  onClick={handleMint}
+                >
+                  {isMinting ? (
+                    <>
+                      <Loader2 size={16} className={styles.spinner} />
+                      {MINT_STEPS_LABELS[mintStep]}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={16} /> Mint NFT
+                    </>
+                  )}
                 </button>
               )}
             </div>
@@ -309,6 +389,54 @@ export default function CreatePage() {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {mintSuccess && (
+        <div className={styles.successOverlay}>
+          <div className={styles.successModal}>
+            <div className={styles.successIconWrap}>
+              <CheckCircle2 size={56} className={styles.successIcon} />
+            </div>
+            <h2 className={styles.successTitle}>NFT Minted Successfully!</h2>
+            <p className={styles.successSubtitle}>
+              Your NFT <strong>{name} {mintedTokenId}</strong> has been minted and
+              {listingType !== "none" ? " listed on the marketplace." : " saved to your collection."}
+            </p>
+
+            <div className={styles.successDetails}>
+              <div className={styles.successRow}>
+                <span>Token ID</span>
+                <span>{mintedTokenId}</span>
+              </div>
+              <div className={styles.successRow}>
+                <span>Network</span>
+                <span>Polygon Amoy</span>
+              </div>
+              {listingType !== "none" && (
+                <div className={styles.successRow}>
+                  <span>{listingType === "fixed" ? "Listed Price" : "Starting Bid"}</span>
+                  <span>◆ {price} ETH</span>
+                </div>
+              )}
+              <div className={styles.successRow}>
+                <span>Transaction</span>
+                <button className={styles.txCopyBtn} onClick={handleCopyTx}>
+                  {mintedTxHash} <Copy size={12} />
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.successActions}>
+              <Link href="/marketplace" className={styles.successBtnPrimary}>
+                <ExternalLink size={16} /> View on Marketplace
+              </Link>
+              <button className={styles.successBtnSecondary} onClick={handleCreateAnother}>
+                <Plus size={16} /> Create Another
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

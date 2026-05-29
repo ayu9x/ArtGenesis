@@ -1,0 +1,26 @@
+.page { padding-top: 72px; min-height: 100vh; }
+.meshBg { position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139,92,246,0.1), transparent), radial-gradient(circle at 80% 80%, rgba(34,197,94,0.05), transparent); pointer-events: none; z-index: 0; }
+.main { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 3rem var(--container-padding) 6rem; }
+.header { text-align: center; margin-bottom: 4rem; }
+.title { font-family: var(--font-display); font-size: clamp(2rem,4vw,3rem); font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem; }
+.subtitle { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; }
+
+.timeline { position: relative; display: flex; flex-direction: column; gap: 2rem; }
+.timeline::before { content: ''; position: absolute; top: 0; bottom: 0; left: 24px; width: 2px; background: var(--border-primary); }
+
+.updateCard { position: relative; display: flex; gap: 2rem; }
+.updateIcon { position: relative; z-index: 2; width: 50px; height: 50px; background: var(--bg-card); border: 2px solid var(--border-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.updateContent { background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: var(--card-radius-lg); padding: 2rem; flex: 1; }
+
+.updateHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.updateBadge { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.3rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.updateDate { font-size: 0.85rem; color: var(--text-tertiary); font-weight: 500; }
+
+.updateTitle { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+.updateDesc { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
+
+@media (max-width: 640px) {
+  .updateCard { flex-direction: column; gap: 1rem; }
+  .timeline::before { display: none; }
+  .updateIcon { display: none; }
+}

@@ -1,79 +1,137 @@
-# ArtGenesis NFT Marketplace
+# ArtGenesis 🎨✨
 
-ArtGenesis is a next-generation full-stack Web3 NFT marketplace designed to empower digital creators and collectors. This platform provides a seamless, non-custodial trading experience with built-in royalty protection, real-time analytics, and premium aesthetics.
+**ArtGenesis** is a modern, comprehensive decentralized NFT marketplace and Web3 ecosystem designed to build the future of digital ownership. 
 
-## 🌟 Key Features
+Our mission is to decentralize the art world, providing creators, engineers, and dreamers with the most beautiful, functional, and secure platform to mint, trade, and discover digital assets.
 
-- **Decentralized Trading**: Non-custodial Smart Contracts built on OpenZeppelin V5 standards for secure, trustless swaps.
-- **Creator Royalties**: First-class support for ERC2981, ensuring creators get paid fairly on every secondary sale.
-- **Gas Optimized**: Designed with Hardhat and optimized for the EVM (Cancun upgrade).
-- **Scalable Architecture**: Monorepo structure powered by Turborepo, featuring a Next.js App Router frontend and a NestJS backend.
-- **Secure Authentication**: Wallet-based authentication utilizing Sign-In with Ethereum (SIWE).
-- **Creator Dashboards**: Real-time analytics, portfolio management, and advanced profile customization.
+---
 
-## 🏗️ Tech Stack
+## 🚀 Key Features
 
-- **Frontend**: Next.js 15 (App Router), React, TypeScript, TailwindCSS, Lucide-React.
-- **Backend API**: NestJS, TypeScript, Prisma ORM, PostgreSQL, Redis.
-- **Smart Contracts**: Solidity ^0.8.24, Hardhat, OpenZeppelin.
-- **DevOps**: Docker, Turborepo, GitHub Actions.
+* **Premium User Interface:** A highly polished, dynamic Next.js frontend with stunning UI/UX, responsive design, interactive dashboards, and collapsible sidebar navigation.
+* **Full-Stack Monorepo Architecture:** Seamlessly orchestrated using Turborepo to house the frontend Web app, backend API, and Smart Contracts under one roof.
+* **Web3 Integration:** Secure and robust Smart Contract implementations using Hardhat and Solidity, providing trustless marketplace transactions.
+* **High Performance Backend:** A dedicated NestJS API powered by Prisma to index blockchain events, handle off-chain metadata, and deliver blazing-fast searches.
+* **Dynamic NFTs & Collections:** Minting interfaces, collection tracking, real-time activity feeds, and trending tokens visualization.
 
-## 🚀 Getting Started
+---
+
+## 🛠 Tech Stack
+
+### Frontend (`apps/web`)
+* **Framework:** [Next.js 14+ (App Router)](https://nextjs.org/)
+* **Language:** TypeScript
+* **Styling:** CSS Modules with custom Design System tokens
+* **Icons:** Lucide React
+
+### Backend (`apps/api`)
+* **Framework:** [NestJS](https://nestjs.com/)
+* **Database / ORM:** SQLite (Dev) / PostgreSQL (Prod) via [Prisma](https://www.prisma.io/)
+* **Language:** TypeScript
+
+### Smart Contracts (`packages/contracts`)
+* **Framework:** [Hardhat](https://hardhat.org/)
+* **Language:** Solidity
+* **Libraries:** OpenZeppelin Contracts
+
+### Tooling
+* **Monorepo Management:** [Turborepo](https://turbo.build/)
+* **Package Manager:** npm
+
+---
+
+## 📁 Project Structure
+
+```text
+ArtGenesis/
+├── apps/
+│   ├── web/               # Next.js frontend application
+│   └── api/               # NestJS backend service
+├── packages/
+│   └── contracts/         # Hardhat project with Solidity smart contracts
+├── turbo.json             # Turborepo configuration
+├── docker-compose.yml     # Docker setup for local infrastructure
+└── package.json           # Root workspace configuration
+```
+
+---
+
+## 🏁 Getting Started
 
 ### Prerequisites
+* Node.js (v18+)
+* npm (v9+)
+* Docker (Optional, for running local DB)
 
-- Node.js (v20+)
-- npm (v10+)
-- Docker & Docker Compose (for local database)
+### Installation
 
-### Local Development
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/ArtGenesis.git
+   cd ArtGenesis
+   ```
 
-1. **Install Dependencies**
+2. **Install all dependencies:**
    ```bash
    npm install
    ```
 
-2. **Start Local Database**
+3. **Environment Setup:**
+   Copy the example environment files for both apps:
    ```bash
-   docker-compose up -d
+   cp .env.example .env
    ```
 
-3. **Configure Environment Variables**
-   Duplicate `.env.example` and rename to `.env`. Fill in the required API keys and database strings.
+### Running Locally
 
-4. **Run the Development Server**
-   ```bash
-   npm run dev
-   ```
-   This will start both the Next.js frontend (`localhost:3000`) and the NestJS backend API (`localhost:3001`).
+You can leverage Turborepo to run the entire stack with a single command:
 
-### Smart Contracts
+```bash
+npm run dev
+```
 
-To compile and test the Ethereum Smart Contracts:
+This will concurrently start:
+- The Next.js frontend on `http://localhost:3000`
+- The NestJS API on `http://localhost:4000`
+- (If configured) The local Hardhat blockchain node
+
+*Alternatively, run individual apps:*
+```bash
+# Frontend only
+npm run dev --filter=web
+
+# Backend only
+npm run dev --filter=api
+```
+
+---
+
+## ⛓️ Smart Contracts
+
+To compile and deploy the smart contracts to a local node:
 
 ```bash
 cd packages/contracts
-npm run build
-npx hardhat test
+npx hardhat compile
+npx hardhat node
+npx hardhat run scripts/deploy.ts --network localhost
 ```
 
-## 📂 Project Structure
+---
 
-```text
-├── apps/
-│   ├── api/          # NestJS Backend Application
-│   └── web/          # Next.js Frontend Application
-├── packages/
-│   ├── contracts/    # Hardhat Solidity Workspace
-├── docker-compose.yml
-├── turbo.json
-└── package.json
+## 🚢 Deployment
+
+### Frontend (Vercel)
+The `apps/web` application is optimized for Vercel deployment. A `vercel.json` configuration is included.
+```bash
+vercel deploy
 ```
 
-## 🛡️ Security
+### Backend (Railway / Render)
+The `apps/api` can be deployed using Docker or a Node.js runtime. A `railway.toml` is included for zero-config Railway deployments.
 
-This project employs best practices in smart contract security, including reentrancy guards, pull-over-push payment patterns, and immutable parameter configurations. However, this repository is provided as-is and has not yet undergone an external professional audit. Please use caution before deploying to mainnet with significant liquidity.
+---
 
 ## 📄 License
 
-MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License.

@@ -39,6 +39,10 @@ const MOCK_NFTS = [
   { id: "m9", category: "Music", image: "/nfts/music1.png", title: "Synthwave Nights EP", collection: "Audio Genesis", isVerified: true, price: "0.5", usdPrice: "1,000", creatorAvatar: "/images/Hackatao.jpg", creatorName: "DJ Cyber", likes: 450 },
   { id: "m10", category: "Music", image: "/nfts/music2.png", title: "Golden Frequency #1", collection: "Frequency Arts", isVerified: true, price: "0.8", usdPrice: "1,600", creatorAvatar: "/images/Mike.jpg", creatorName: "Audio Alchemist", likes: 320, isAuction: true, endTime: "12h 00m" },
   { id: "m11", category: "Photography", image: "/nfts/photo1.png", title: "Neon Nights in Neo-Tokyo", collection: "Urban Exploration", isVerified: true, price: "1.2", usdPrice: "2,400", creatorAvatar: "/images/Reeza.jpg", creatorName: "Street Walker", likes: 890 },
+  { id: "m12", category: "PFPs", image: "/nfts/pfp1.png", title: "Cyber Ape #8991", collection: "CyberApes", isVerified: true, price: "5.5", usdPrice: "11,000", creatorAvatar: "/images/Tobi.jpg", creatorName: "Ape Creator", likes: 2310 },
+  { id: "m13", category: "PFPs", image: "/nfts/pfp2.png", title: "Neo Hacker #042", collection: "Neo Hackers", isVerified: true, price: "3.2", usdPrice: "6,400", creatorAvatar: "/images/Hackatao.jpg", creatorName: "Cyber Girl", likes: 1845 },
+  { id: "m14", category: "Gaming", image: "/nfts/gaming1.png", title: "Runesword of Eternity", collection: "Legendary Loot", isVerified: true, price: "4.2", usdPrice: "8,400", creatorAvatar: "/images/Mike.jpg", creatorName: "DungeonForge", likes: 1560 },
+  { id: "m15", category: "Gaming", image: "/nfts/gaming2.png", title: "Iron Titan MK-IX", collection: "Mech Arena", isVerified: true, price: "6.8", usdPrice: "13,600", creatorAvatar: "/images/Tobi.jpg", creatorName: "MechLord", likes: 2180, isAuction: true, endTime: "4h 45m" },
 ];
 
 export default function MarketplacePage() {
