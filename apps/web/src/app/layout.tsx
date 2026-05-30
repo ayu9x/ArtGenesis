@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { Sidebar } from "@/components/layout/Sidebar";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -39,6 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ClientLayout } from "@/components/layout/ClientLayout";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,12 +47,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} ${spaceGrotesk.variable} noise-overlay`}>
         <FavoritesProvider>
-          <Navbar />
-          <div className="layout-container">
-            <Sidebar />
-            <main className="main-content">{children}</main>
-          </div>
-          <Footer />
+          <ClientLayout>{children}</ClientLayout>
         </FavoritesProvider>
       </body>
     </html>

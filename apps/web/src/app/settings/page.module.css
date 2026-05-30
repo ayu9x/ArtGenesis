@@ -485,26 +485,69 @@ input:checked + .slider:before {
   animation: spin 1s linear infinite;
 }
 
+.mobileSidebarHeader {
+  display: none;
+}
+
+.sidebarToggleBtn {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .page {
     flex-direction: column;
+  }
+  
+  .mobileSidebarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  .mobileSidebarHeader h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-family: var(--font-display);
+    color: var(--text-primary);
+  }
+  
+  .sidebarToggleBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 0.5rem;
+    cursor: pointer;
   }
   
   .sidebar {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border-primary);
+    display: none; /* hidden by default on mobile */
+  }
+
+  .sidebar.open {
+    display: flex;
+  }
+
+  .sidebarHeader {
+    display: none; /* hide standard header on mobile */
   }
   
   .nav {
-    flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: 1rem;
+    flex-direction: column;
+    padding: 1rem;
   }
   
   .navItem {
-    white-space: nowrap;
-    width: auto;
+    width: 100%;
+    white-space: normal;
   }
   
   .main {
@@ -521,3 +564,4 @@ input:checked + .slider:before {
     gap: 1rem;
   }
 }
+

@@ -298,6 +298,8 @@
 
 .priceInput {
   flex: 1;
+  min-width: 0;
+  width: 100%;
   padding: 0.55rem 0.75rem;
   font-family: var(--font-primary);
   font-size: 0.8rem;

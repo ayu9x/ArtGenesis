@@ -47,9 +47,16 @@ export function Navbar() {
     // Check if logged in
     const token = localStorage.getItem("auth_token");
     if (token) {
-      setIsConnected(true);
-      // Optional: decode token to get email, but for now we just show a generic address/username
-      setWalletAddress("Logged In");
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setIsConnected(true);
+        // Show email or username from JWT payload
+        setWalletAddress(payload.username || payload.email || "Logged In");
+      } catch (e) {
+        // Invalid token
+        localStorage.removeItem("auth_token");
+        setIsConnected(false);
+      }
     }
   }, []);
 

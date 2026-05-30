@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { NftModule } from './nft/nft.module';
 import { MarketplaceModule } from './marketplace/marketplace.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -14,8 +15,10 @@ import { MarketplaceModule } from './marketplace/marketplace.module';
     UsersModule,
     NftModule,
     MarketplaceModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { User, Bell, Shield, Wallet, Link as LinkIcon, Save, CreditCard, CheckCircle2, Loader2, XCircle, Copy, Check } from "lucide-react";
+import { User, Bell, Shield, Wallet, Link as LinkIcon, Save, CreditCard, CheckCircle2, Loader2, XCircle, Copy, Check, Settings, Menu, X } from "lucide-react";
 import styles from "./page.module.css";
 
 const SETTINGS_TABS = [
@@ -18,6 +18,7 @@ const SETTINGS_TABS = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Real wallet state
   const [connectedWallets, setConnectedWallets] = useState<{ name: string; address: string; isPrimary: boolean }[]>([]);
@@ -124,7 +125,13 @@ export default function SettingsPage() {
     `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   return (
     <div className={styles.page}>
-      <div className={styles.sidebar}>
+      <div className={styles.mobileSidebarHeader}>
+        <h3>Settings</h3>
+        <button className={styles.sidebarToggleBtn} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+      <div className={`${styles.sidebar} ${isSidebarOpen ? styles.open : ''}`}>
         <div className={styles.sidebarHeader}>
           <h3>Settings</h3>
         </div>
@@ -133,7 +140,10 @@ export default function SettingsPage() {
             <button
               key={tab.id}
               className={`${styles.navItem} ${activeTab === tab.id ? styles.active : ''}`}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setIsSidebarOpen(false);
+              }}
             >
               {tab.icon} {tab.label}
             </button>

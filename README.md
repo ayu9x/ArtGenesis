@@ -11,6 +11,7 @@ Our mission is to decentralize the art world, providing creators, engineers, and
 ArtGenesis comes packed with cutting-edge features for both users and developers:
 
 * **Collapsible Hover Sidebar:** An intelligent, auto-hiding sidebar that provides deep navigation (Discover, Collections, Tokens, Swap, Drops, Activity, Rewards, Studio) while staying entirely out of the way for maximum screen real-estate.
+* **Full Admin Dashboard:** Secure, role-based platform management portal with deep statistics, activity tracking (logins, signups, mints), real-time user management, and dynamic database insights.
 * **Complex Dashboard UIs:** Premium, highly-dense data layouts similar to top-tier crypto exchanges, featuring interactive SVGs, CSS grids, gradient text, and live statistics.
 * **Modular Dropdown Navigations:** Clean, structured sub-menus (Profile, Resources, Settings) managed securely within the client state.
 * **Integrated Web3 Stack:** Seamless connections between a frontend marketplace, a dedicated indexing backend, and Ethereum-compatible Smart Contracts.

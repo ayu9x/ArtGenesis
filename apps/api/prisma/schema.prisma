@@ -26,6 +26,7 @@ model User {
   twitter          String?
   instagram        String?
   website          String?
+  role             String    @default("USER") // USER | ADMIN
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 

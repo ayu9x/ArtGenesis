@@ -5,9 +5,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
+import { JwtService } from '@nestjs/jwt';
+
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService
+  ) {}
 
   generateNonce(): string {
     return generateNonce();
@@ -30,7 +35,8 @@ export class AuthService {
         });
       }
 
-      const token = crypto.randomBytes(32).toString('hex');
+      const payload = { sub: user.id, address: user.address };
+      const token = this.jwtService.sign(payload);
 
       return {
         success: true,
@@ -48,15 +54,30 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
+    // Generate a mock Ethereum address for email users so they can own NFTs
+    const mockAddress = '0x' + crypto.randomBytes(20).toString('hex');
+
     const user = await this.prisma.user.create({
       data: {
         email,
         passwordHash,
-        username: name
+        username: name,
+        address: mockAddress,
       }
     });
 
-    const token = crypto.randomBytes(32).toString('hex');
+    const payload = { sub: user.id, email: user.email, username: user.username, role: user.role };
+    const token = this.jwtService.sign(payload);
+
+    try {
+      await this.prisma.activity.create({
+        data: {
+          type: 'SIGNUP',
+          userId: user.id,
+        }
+      });
+    } catch (e) { /* ignore */ }
+
     return { success: true, user, token };
   }
 
@@ -71,7 +92,18 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = crypto.randomBytes(32).toString('hex');
+    const payload = { sub: user.id, email: user.email, username: user.username, role: user.role };
+    const token = this.jwtService.sign(payload);
+
+    try {
+      await this.prisma.activity.create({
+        data: {
+          type: 'LOGIN',
+          userId: user.id,
+        }
+      });
+    } catch (e) { /* ignore */ }
+
     return { success: true, user, token };
   }
 

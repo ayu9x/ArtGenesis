@@ -15,7 +15,9 @@ import {
   ChevronDown,
   FileText,
   Settings,
-  HelpCircle
+  HelpCircle,
+  ChevronRight,
+  ChevronLeft
 } from "lucide-react";
 import styles from "./Sidebar.module.css";
 
@@ -24,10 +26,13 @@ export function Sidebar() {
   const [profileOpen, setProfileOpen] = useState(true);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className={styles.sidebarContainer}>
-      <div className={styles.hoverTrigger} />
+    <div className={`${styles.sidebarContainer} ${isSidebarOpen ? styles.sidebarOpen : ""}`}>
+      <button className={styles.toggleBtn} onClick={() => setIsSidebarOpen(!isSidebarOpen)} aria-label="Toggle Sidebar">
+        {isSidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+      </button>
       <aside className={styles.sidebar}>
         <nav className={styles.nav}>
         {/* Main Navigation */}
