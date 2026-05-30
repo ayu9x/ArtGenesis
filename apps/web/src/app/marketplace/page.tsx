@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import {
   Search,
   SlidersHorizontal,
@@ -45,7 +45,7 @@ const MOCK_NFTS = [
   { id: "m15", category: "Gaming", image: "/nfts/gaming2.png", title: "Iron Titan MK-IX", collection: "Mech Arena", isVerified: true, price: "6.8", usdPrice: "13,600", creatorAvatar: "/images/Tobi.jpg", creatorName: "MechLord", likes: 2180, isAuction: true, endTime: "4h 45m" },
 ];
 
-export default function MarketplacePage() {
+function MarketplaceContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "All";
   const normalizedCategory = CATEGORIES.find(c => c.toLowerCase() === initialCategory.toLowerCase()) || "All";
@@ -266,5 +266,13 @@ export default function MarketplacePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MarketplacePage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading marketplace...</div>}>
+      <MarketplaceContent />
+    </Suspense>
   );
 }
